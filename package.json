@@ -1,0 +1,20 @@
+{
+  "name": "jedi",
+  "version": "1.0.0",
+  "description": "多仓MR调度后台",
+  "main": "index.js",
+  "scripts": {
+    "fsm": "node --use_strict fsm/playground.js",
+    "test": "node --use_strict index.js",
+    "dev": "nodemon index.js --use_strict",
+    "init-db": "node init-db.js --use_strict"
+  },
+  "author": "ihenryhuang",
+  "license": "MIT",
+  "dependencies": {
+    "xstate": "^4.34.0",
+    "mysql2": "1.6.4"
+  },
+  "devDependencies": {
+  }
+}
