@@ -1,5 +1,3 @@
-const {NodeState, NodeEvent} = require("./dispatcher/define/define");
-const {mapState} = require("xstate");
 
 class FSM {
     constructor (defines, initialState) {
@@ -12,11 +10,24 @@ class FSM {
     send (event) {
         this.defines.forEach((define, i) => {
             if (this.state == define.from && event == define.event) {
+                this.stateWillChange(define.from, define.to)
                 this.state = define.to;
+                this.stateDidChange(define.from, define.to)
             }
         })
     }
 
+    // 状态即将发生变化
+    stateWillChange (oldState, newState) {
+
+    }
+
+    // 状态已经发生变化
+    stateDidChange (oldState, newState) {
+
+    }
+
+    // 持久化存储的字符串
     persistenceStateJsonString () {
         return this.state;
     }
@@ -60,25 +71,24 @@ const Event = {
 };
 
 
-const  defines = Array()
-defines.push({from:State.idle, to:State.processing, event:Event.startProcess})
-defines.push({from:State.idle, to:State.cancel, event:Event.userCancel})
-
-defines.push({from:State.processing, to:State.success, event:Event.processSuccess})
-defines.push({from:State.processing, to:State.failure, event:Event.processFail})
-defines.push({from:State.processing, to:State.cancel, event:Event.userCancel})
-
-defines.push({from:State.failure, to:State.cancel, event:Event.userCancel})
-defines.push({from:State.failure, to:State.success, event:Event.processSuccess})
-
+const  defines = [
+    {from:State.idle, to:State.processing, event:Event.startProcess},
+    {from:State.idle, to:State.cancel, event:Event.userCancel},
+    {from:State.processing, to:State.success, event:Event.processSuccess},
+    {from:State.processing, to:State.failure, event:Event.processFail},
+    {from:State.processing, to:State.cancel, event:Event.userCancel},
+    {from:State.failure, to:State.cancel, event:Event.userCancel},
+    {from:State.failure, to:State.success, event:Event.processSuccess}
+]
 
 const  initialState = State.idle;
 const fsm = new FSM(defines, initialState)
+
 console.log(fsm.stateValue());
-fsm.send(NodeEvent.startProcess)
+fsm.send(Event.startProcess)
 console.log(fsm.stateValue());
 
-fsm.send(NodeEvent.processSuccess)
+fsm.send(Event.processSuccess)
 console.log(fsm.stateValue());
 fsm.reset()
 console.log(fsm.stateValue());
