@@ -8,13 +8,15 @@ class FSM {
 
     // 发送消息
     send (event) {
-        this.defines.forEach((define, i) => {
+        for (let i=0; i < this.defines.length; i ++) {
+            const define = this.defines[i];
             if (this.state == define.from && event == define.event) {
                 this.stateWillChange(define.from, define.to)
                 this.state = define.to;
                 this.stateDidChange(define.from, define.to)
+                break;
             }
-        })
+        }
     }
 
     // 状态即将发生变化
@@ -55,42 +57,42 @@ class FSM {
 
 // 节点状态
 const State = {
-    idle: 'idle', // 出事状态
-    processing: 'processing', // 处理中
-    success: 'success', // 成功
-    failure: 'failure', // 失败
-    cancel: 'cancel' // 取消
+    off:'off', // 关闭
+    level1Cold: 'level1Cold', // 一档冷光
+    level2Cold: 'level2Cold', // 二档冷光
+    level3Cold: 'level3Cold', // 三档冷光
+    level2Warm: 'level2Warm', // 二档暖光
+    level3Warm: 'level3Warm' // 三档暖光
 };
 
-// 节点事件
 const Event = {
-    startProcess: 'START_PROCESS', // 开始处理
-    processSuccess: 'PROCESS_SUCCESS', // 处理成功
-    processFail: 'PROCESS_FAIL', // 处理失败
-    userCancel: 'USER_CANCEL' // 用户取消
+    lBtnTap: 'lBtnTap', // 左侧按钮点击
+    rBtnTap: 'rBtnTap', // 右侧按钮点击
 };
-
 
 const  defines = [
-    {from:State.idle, to:State.processing, event:Event.startProcess},
-    {from:State.idle, to:State.cancel, event:Event.userCancel},
-    {from:State.processing, to:State.success, event:Event.processSuccess},
-    {from:State.processing, to:State.failure, event:Event.processFail},
-    {from:State.processing, to:State.cancel, event:Event.userCancel},
-    {from:State.failure, to:State.cancel, event:Event.userCancel},
-    {from:State.failure, to:State.success, event:Event.processSuccess}
+    {from:State.off, to:State.level1Cold, event:Event.lBtnTap},
+    {from:State.level1Cold, to:State.level2Cold, event:Event.lBtnTap},
+    {from:State.level2Cold, to:State.level3Cold, event:Event.lBtnTap},
+    {from:State.level2Cold, to:State.level2Warm, event:Event.rBtnTap},
+    {from:State.level2Warm, to:State.level2Cold, event:Event.rBtnTap},
+    {from:State.level3Cold, to:State.level3Warm, event:Event.rBtnTap},
+    {from:State.level3Warm, to:State.level3Cold, event:Event.rBtnTap},
+    {from:State.level3Cold, to:State.off, event:Event.lBtnTap},
+    {from:State.level3Warm, to:State.off, event:Event.lBtnTap},
+
 ]
 
-const  initialState = State.idle;
+const  initialState = State.off;
 const fsm = new FSM(defines, initialState)
 
 console.log(fsm.stateValue());
-fsm.send(Event.startProcess)
+fsm.send(Event.lBtnTap)
+fsm.send(Event.lBtnTap)
+fsm.send(Event.lBtnTap)
+fsm.send(Event.lBtnTap)
+fsm.send(Event.lBtnTap)
+fsm.send(Event.lBtnTap)
 console.log(fsm.stateValue());
-
-fsm.send(Event.processSuccess)
+fsm.send(Event.rBtnTap)
 console.log(fsm.stateValue());
-fsm.reset()
-console.log(fsm.stateValue());
-
-
