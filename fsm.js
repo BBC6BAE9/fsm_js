@@ -8,9 +8,9 @@ class FSM {
 
     // 发送消息
     send (event) {
-        for (let i=0; i < this.defines.length; i ++) {
+        for (let i = 0; i < this.defines.length; i ++) {
             const define = this.defines[i];
-            if (this.state == define.from && event == define.event) {
+            if (this.state === define.from && event === define.event) {
                 this.stateWillChange(define.from, define.to)
                 this.state = define.to;
                 this.stateDidChange(define.from, define.to)
@@ -80,7 +80,6 @@ const  defines = [
     {from:State.level3Warm, to:State.level3Cold, event:Event.rBtnTap},
     {from:State.level3Cold, to:State.off, event:Event.lBtnTap},
     {from:State.level3Warm, to:State.off, event:Event.lBtnTap},
-
 ]
 
 const  initialState = State.off;
